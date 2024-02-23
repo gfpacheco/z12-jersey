@@ -5,9 +5,43 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Z12 Esporte Clube</title>
+    <style>
+      #variants {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        display: flex;
+        gap: 1rem;
+      }
+
+      button {
+        background-color: transparent;
+        background-image: none;
+        border-width: 0;
+        padding: 0;
+        transition: transform 0.2s cubic-bezier(.59,2.19,.64,1);
+      }
+
+      button:active {
+        transform: scale(0.9) translateY(0.1rem);
+      }
+
+      img {
+        width: 3rem;
+        height: 3rem;
+      }
+    </style>
   </head>
   <body>
     <canvas id="scene"></canvas>
+    <div id="variants">
+      <button id="regular">
+        <img src="/regular-icon.png" alt="Regular" />
+      </button>
+      <button id="libero">
+        <img src="/libero-icon.png" alt="Líbero" />
+      </button>
+    </div>
     <script type="module" src="/src/scene.ts"></script>
   </body>
 </html>

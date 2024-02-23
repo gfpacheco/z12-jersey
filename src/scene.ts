@@ -12,6 +12,7 @@ import {
   WebGLRenderer,
   Group,
   Object3DEventMap,
+  Material,
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { toggleFullScreen } from './helpers/fullscreen';
@@ -27,6 +28,29 @@ let pointLight: PointLight;
 let jersey: Group<Object3DEventMap>;
 let camera: PerspectiveCamera;
 let cameraControls: OrbitControls;
+
+function loadMaterial(fileName: string) {
+  const texture = new TextureLoader().load(
+    `${import.meta.env.BASE_URL}${fileName}`,
+  );
+  texture.flipY = false;
+  texture.colorSpace = SRGBColorSpace;
+
+  return new MeshStandardMaterial({ map: texture });
+}
+
+const materials = {
+  regular: loadMaterial('regular.png'),
+  libero: loadMaterial('libero.png'),
+};
+
+function applyMaterial(material: Material) {
+  jersey?.traverse((child) => {
+    if (child instanceof Mesh) {
+      child.material = material;
+    }
+  });
+}
 
 init();
 animate();
@@ -44,30 +68,18 @@ function init() {
 
   // ===== 📦 OBJECTS =====
   {
-    const texture = new TextureLoader().load(
-      `${import.meta.env.BASE_URL}texture.png`,
-    );
-    texture.flipY = false;
-    texture.colorSpace = SRGBColorSpace;
-
-    const material = new MeshStandardMaterial({ map: texture });
-
     new GLTFLoader().load(
       `${import.meta.env.BASE_URL}jersey.glb`,
       function (gltf) {
         jersey = gltf.scene;
         jersey.scale.set(0.05, 0.05, 0.05);
 
-        jersey.traverse((child) => {
-          if (child instanceof Mesh) {
-            child.material = material;
-          }
-        });
+        applyMaterial(materials.regular);
 
         scene.add(jersey);
 
         const cameraTarget = jersey.position.clone();
-        cameraTarget.y += 0.75;
+        cameraTarget.y += 0.65;
         cameraControls.target = cameraTarget;
       },
       undefined,
@@ -107,6 +119,14 @@ function init() {
       if (event.target === canvas) {
         toggleFullScreen(canvas);
       }
+    });
+
+    document.getElementById('regular')?.addEventListener('click', () => {
+      applyMaterial(materials.regular);
+    });
+
+    document.getElementById('libero')?.addEventListener('click', () => {
+      applyMaterial(materials.libero);
     });
   }
 
